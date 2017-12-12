@@ -1,6 +1,41 @@
 # Image Resizer
 
-[TODO. There will be project description]
+Takes in image file, resize it according to user settings.
+
+# How to Install
+
+You just need to download and install python3 if you already haven't: http://python.org .
+Also you need to install Pillow package. Pillow and PIL cannot co-exist in the same environment. Before installing Pillow, please uninstall PIL.
+
+```bash
+pip install -r requirements.txt
+```
+or
+```
+pip install Pillow
+```
+
+# How to use
+
+You can run image_resize.py with these arguments:
+--scale (-s) INT or (--width INT or/and --height INT) or/and --output(-o) path_to_result_file 
+
+There are some examples:
+
+Resizing to 555-width image (height will auto-fit without disproportion).
+```bash
+python image_resize.py --width 555 logo.png
+```
+
+Double an image.
+```bash
+python image_resize.py -s 2 logo.png
+```
+
+Setting manual parameters and save it to new_logo.png.
+```bash
+python image_resize.py -s 2 -o new_logo.png logo.png
+```
 
 # Project Goals
 
