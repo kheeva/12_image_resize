@@ -18,7 +18,7 @@ pip install Pillow
 # How to use
 
 You can run image_resize.py with these arguments:
---scale (-s) INT or (--width INT or/and --height INT) or/and --output(-o) path_to_result_file 
+--scale (-s) INT or (--width INT or/and --height INT) or/and --output(-o) path_to_result_file path_to_original_file
 
 There are some examples:
 
