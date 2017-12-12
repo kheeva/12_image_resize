@@ -34,7 +34,7 @@ python image_resize.py -s 2 logo.png
 
 Setting manual parameters and save it to new_logo.png.
 ```bash
-python image_resize.py -s 2 -o new_logo.png logo.png
+python image_resize.py --width 500 --height 700 -o new_logo.png logo.png
 ```
 
 # Project Goals
