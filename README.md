@@ -4,7 +4,7 @@ Takes an image file, resize it according to user settings.
 
 # How to Install
 
-You just need to download and install python3 if you already haven't: http://python.org .
+You just need to download and install [python3.](http://python.org)
 Also you need to install Pillow package. Pillow and PIL cannot co-exist in the same environment. Before installing Pillow, please uninstall PIL.
 
 ```bash
