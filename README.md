@@ -4,8 +4,8 @@ Takes an image file, resize it according to user settings.
 
 # How to Install
 
-You just need to download and install [python3.](http://python.org)
-Also you need to install Pillow package. Pillow and PIL cannot co-exist in the same environment. Before installing Pillow, please uninstall PIL.
+You just need to download and install [python3](http://python.org).
+Also you need to install [Pillow package](https://pypi.python.org/pypi/Pillow/4.3.0).<br /> Pillow and PIL cannot co-exist in the same environment. Before installing Pillow, please uninstall PIL.
 
 ```bash
 pip install -r requirements.txt
