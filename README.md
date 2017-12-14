@@ -23,19 +23,19 @@ You can run image_resize.py with these arguments:
 There are some examples:
 
 * Resizing to 555-width image (height will auto-fit without disproportion).
-`
-python image_resize.py --width 555 logo.png
-`
+```
+python image_resize.py `--width 555 logo.png`
+```
 
 * Double an image.
-`
-python image_resize.py -s 2 logo.png
-`
+```
+python image_resize.py `-s 2 logo.png`
+```
 
 * Setting manual parameters and save it to new_logo.png.
-`
-python image_resize.py --width 500 --height 700 -o new_logo.png logo.png
-`
+```
+python image_resize.py `--width 500 --height 700 -o new_logo.png logo.png`
+```
 
 # Project Goals
 
