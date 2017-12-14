@@ -19,12 +19,12 @@ pip install Pillow
 
 You can run image_resize.py with some arguments.
 You need at least one of these below:
-*`--scale (-s) INT` or
-*`--width INT` or/and
-*`--height INT` or/and
+* `--scale (-s) INT` or
+* `--width INT` or/and
+* `--height INT` or/and
 Obviously, path to original file is required..
-*`--output(-o) path_to_result_file`
-*`path_to_original_file`
+* `--output(-o) path_to_result_file`
+* `path_to_original_file`
 
 
 There are some examples:
