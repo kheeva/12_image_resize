@@ -5,6 +5,7 @@ from PIL import Image
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='Resize an image.')
+
     parser.add_argument(
         'file',
         metavar='image file',
@@ -13,7 +14,7 @@ def get_arguments():
     parser.add_argument(
         '--scale',
         '-s',
-        type=int,
+        type=float,
         help='scale by a factor of s'
     )
     parser.add_argument(
@@ -31,39 +32,21 @@ def get_arguments():
         '-o',
         help='path to an output image'
     )
-    return parser.parse_args()
+    return parser
 
 
-def get_output_file_width_and_height(path_to_original, scale, width, height):
-    image = Image.open(path_to_original)
-    if scale:
-        if scale > 0:
-            output_file_width, output_file_height = map(
-                lambda x: x * scale,
-                image.size
-            )
-        else:
-            output_file_width, output_file_height = map(
-                lambda x: -1 * x // scale, image.size)
-    elif width and height:
-        output_file_width = width
-        output_file_height = height
-    else:
-        img_width, img_height = image.size
-        if width:
-            output_file_width = width
-            output_file_height = img_height * output_file_width // img_width
-        else:
-            output_file_height = args.height
-            output_file_width = img_width * output_file_height // img_height
+def get_scaled_width_height(image_object, scale):
+    return map(lambda x: int(x*scale), image_object.size)
 
-    return output_file_width, output_file_height
+
+def get_second_output_side(width, height, out_width, out_height):
+    if out_width:
+        return height * out_width // width
+    return width * out_height // height
 
 
 def make_output_filename(path_to_file, file_width, file_height):
-    file_name, file_extension = os.path.basename(
-        path_to_file).split('.')
-
+    file_name, file_extension = os.path.splitext(path_to_file)
     return '{}__{}x{}.{}'.format(
         file_name,
         file_width,
@@ -72,35 +55,59 @@ def make_output_filename(path_to_file, file_width, file_height):
     )
 
 
-def resize_image(path_to_original, path_to_result, image_width, image_height):
-    image = Image.open(path_to_original)
-    image = image.resize(
-        (image_width, image_height),
-        Image.ANTIALIAS
-    )
-    image.save(path_to_result)
+def resize_image(image_object, path_to_result, width, height):
+    output_image = image_object.resize(
+        (width, height),
+        Image.ANTIALIAS)
+    output_image.save(path_to_result)
 
 
 if __name__ == '__main__':
-    args = get_arguments()
+    argparse_parser = get_arguments()
+    args = argparse_parser.parse_args()
+
     if not (args.scale or args.width or args.height):
-        parser.error(
+        argparse_parser.error(
             'one of resize parameters must be given:'
             ' [-s | {--width and/or --height}]')
 
     if args.scale and (args.width or args.height):
-        parser.error('error: --width or --height not allowed with --scale.')
+        argparse_parser.error('error: --width or --height not allowed'
+                              'with --scale.')
 
-    if args.width and args.height:
+    for argument in [args.scale, args.width, args.height]:
+        if argument and argument < 0:
+            argparse_parser.error('scale/width/height must be positive INT')
+
+    image = Image.open(args.file)
+    image_width, image_height = image.size
+
+    if args.scale and args.scale > 0:
+        output_image_width, output_image_height = get_scaled_width_height(
+            image,
+            args.scale
+        )
+    elif args.width and args.height:
         print('warning: simultaneous using width and height may cause '
               'image disproportion.')
-
-    output_image_width, output_image_height = get_output_file_width_and_height(
-        args.file,
-        args.scale,
-        args.width,
-        args.height
-    )
+        output_image_width = args.width
+        output_image_height = args.height
+    elif args.width:
+        output_image_width = args.width
+        output_image_height = get_second_output_side(
+            image_width,
+            image_height,
+            output_image_width,
+            None
+        )
+    else:
+        output_image_height = args.height
+        output_image_width = get_second_output_side(
+            image_width,
+            image_height,
+            None,
+            output_image_height
+        )
 
     if not args.output:
         result_file_path = make_output_filename(
@@ -112,7 +119,7 @@ if __name__ == '__main__':
         result_file_path = args.output
 
     resize_image(
-        args.file,
+        image,
         result_file_path,
         output_image_width,
         output_image_height
