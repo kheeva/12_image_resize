@@ -35,19 +35,35 @@ def get_arguments():
     return parser
 
 
+def output_and_exit_if_args_error(_args):
+    if not (_args.scale or _args.width or _args.height):
+        argparse_parser.error(
+            'one of resize parameters must be given:'
+            ' [-s | {--width and/or --height}]')
+
+    if _args.scale and (_args.width or _args.height):
+        argparse_parser.error('error: --width or --height not allowed'
+                              'with --scale.')
+
+    for argument in [_args.scale, _args.width, _args.height]:
+        if argument and argument < 0:
+            argparse_parser.error('scale/width/height must be positive INT')
+
+
 def get_scaled_width_height(image_object, scale):
     return map(lambda x: int(x*scale), image_object.size)
 
 
-def get_second_output_side(width, height, out_width, out_height):
+def get_second_output_side(width, height, out_sizes):
+    out_width, out_height = out_sizes
     if out_width:
-        return height * out_width // width
-    return width * out_height // height
+        return out_width, height * out_width // width
+    return width * out_height // height, out_height
 
 
 def make_output_filename(path_to_file, file_width, file_height):
     file_name, file_extension = os.path.splitext(path_to_file)
-    return '{}__{}x{}.{}'.format(
+    return '{}__{}x{}{}'.format(
         file_name,
         file_width,
         file_height,
@@ -65,19 +81,7 @@ def resize_image(image_object, path_to_result, width, height):
 if __name__ == '__main__':
     argparse_parser = get_arguments()
     args = argparse_parser.parse_args()
-
-    if not (args.scale or args.width or args.height):
-        argparse_parser.error(
-            'one of resize parameters must be given:'
-            ' [-s | {--width and/or --height}]')
-
-    if args.scale and (args.width or args.height):
-        argparse_parser.error('error: --width or --height not allowed'
-                              'with --scale.')
-
-    for argument in [args.scale, args.width, args.height]:
-        if argument and argument < 0:
-            argparse_parser.error('scale/width/height must be positive INT')
+    output_and_exit_if_args_error(args)
 
     image = Image.open(args.file)
     image_width, image_height = image.size
@@ -92,21 +96,11 @@ if __name__ == '__main__':
               'image disproportion.')
         output_image_width = args.width
         output_image_height = args.height
-    elif args.width:
-        output_image_width = args.width
-        output_image_height = get_second_output_side(
-            image_width,
-            image_height,
-            output_image_width,
-            None
-        )
     else:
-        output_image_height = args.height
-        output_image_width = get_second_output_side(
+        output_image_width, output_image_height = get_second_output_side(
             image_width,
             image_height,
-            None,
-            output_image_height
+            (args.width, args.height)
         )
 
     if not args.output:
