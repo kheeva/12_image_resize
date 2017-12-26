@@ -3,7 +3,7 @@ import argparse
 from PIL import Image
 
 
-def get_arguments():
+def make_args_parser():
     parser = argparse.ArgumentParser(description='Resize an image.')
 
     parser.add_argument(
@@ -35,7 +35,7 @@ def get_arguments():
     return parser
 
 
-def output_and_exit_if_args_error(_args):
+def catch_args_errors_print_them_and_stop_program(_args):
     if not (_args.scale or _args.width or _args.height):
         argparse_parser.error(
             'one of resize parameters must be given:'
@@ -48,10 +48,6 @@ def output_and_exit_if_args_error(_args):
     for argument in [_args.scale, _args.width, _args.height]:
         if argument and argument < 0:
             argparse_parser.error('scale/width/height must be positive INT')
-
-
-def get_scaled_width_height(image_object, scale):
-    return map(lambda x: int(x*scale), image_object.size)
 
 
 def get_second_output_side(width, height, out_sizes):
@@ -79,17 +75,17 @@ def resize_image(image_object, path_to_result, width, height):
 
 
 if __name__ == '__main__':
-    argparse_parser = get_arguments()
+    argparse_parser = make_args_parser()
     args = argparse_parser.parse_args()
-    output_and_exit_if_args_error(args)
+    catch_args_errors_print_them_and_stop_program(args)
 
     image = Image.open(args.file)
     image_width, image_height = image.size
 
-    if args.scale and args.scale > 0:
-        output_image_width, output_image_height = get_scaled_width_height(
-            image,
-            args.scale
+    if args.scale:
+        output_image_width, output_image_height = map(
+            lambda x: int(x*args.scale),
+            (image_width, image_height)
         )
     elif args.width and args.height:
         print('warning: simultaneous using width and height may cause '
