@@ -35,7 +35,7 @@ def make_args_parser():
     return parser
 
 
-def catch_args_errors_print_them_and_stop_program(_args):
+def output_parser_errors(_args):
     if not (_args.scale or _args.width or _args.height):
         argparse_parser.error(
             'one of resize parameters must be given:'
@@ -77,7 +77,7 @@ def resize_image(image_object, path_to_result, width, height):
 if __name__ == '__main__':
     argparse_parser = make_args_parser()
     args = argparse_parser.parse_args()
-    catch_args_errors_print_them_and_stop_program(args)
+    output_parser_errors(args)
 
     image = Image.open(args.file)
     image_width, image_height = image.size
